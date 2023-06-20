@@ -33,7 +33,6 @@ background_image = ImageTk.PhotoImage(Image.open("29c953e9-6b99-403d-abbd-4a64d9
 background_label = tk.Label(root, image=background_image)
 background_label.place(x=0, y=0, relwidth=1, relheight=1)
 
-
 # Create a frame for the content
 content_frame = ttk.Frame(root)
 content_frame.place(relx=0.2, rely=0.2, relwidth=0.6, relheight=0.6)
@@ -46,21 +45,19 @@ button.place(relx=0.4, rely=0.1)
 text_box = tk.Text(content_frame)
 text_box.place(relx=0.2, rely=0.4, relwidth=0.6, relheight=0.4)
 
-# Create tabs
-tab_control = ttk.Notebook(content_frame)
-tab_control.place(relx=0.05, rely=0.05, relwidth=0.9, relheight=0.2)
+# Create a menu bar
+menu_bar = tk.Menu(root)
+root.config(menu=menu_bar)
 
-# Create the "File" tab
-file_tab = ttk.Frame(tab_control)
-tab_control.add(file_tab, text="File")
+# Create the "File" menu
+file_menu = tk.Menu(menu_bar, tearoff=False)
+menu_bar.add_cascade(label="File", menu=file_menu)
 
-# Create the "Save" button in the "File" tab
-save_button = ttk.Button(file_tab, text="Save", command=save_text)
-save_button.pack(pady=10)
+# Add "Save" option to the "File" menu
+file_menu.add_command(label="Save", command=save_text)
 
-# Create the "Load" button in the "File" tab
-load_button = ttk.Button(file_tab, text="Load", command=load_text)
-load_button.pack(pady=10)
+# Add "Load" option to the "File" menu
+file_menu.add_command(label="Load", command=load_text)
 
 # Run the main loop
 root.mainloop()
