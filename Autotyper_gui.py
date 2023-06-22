@@ -6,7 +6,7 @@ import time
 import json
 
 
-def save_text():
+def save_code():
     filename = filedialog.asksaveasfilename(defaultextension=".txt",
                                             filetypes=(("Text Files", "*.txt"), ("All Files", "*.*")))
     if filename:
@@ -15,7 +15,7 @@ def save_text():
             file.write(text)
 
 
-def load_text():
+def load_code():
     filename = filedialog.askopenfilename(filetypes=(("Text Files", "*.txt"), ("All Files", "*.*")))
     if filename:
         with open(filename, "r") as file:
@@ -27,6 +27,29 @@ def load_text():
 default_keys = ("C", "F", "H", "J", "K", "M", "N", "P", "Q", "R", "S",
                 "T", "W", "X", "Y", "0", "1", "2", "3", "4", "5", "6", "7",
                 "8", "9", "@", "&", "-", "#", "%", "+", "=")
+
+
+def export_mapping():
+    target_file = filedialog.asksaveasfilename(defaultextension=".json",
+                                            filetypes=(("Json Files", "*.json"), ("All Files", "*.*")))
+
+    try:
+        with open("positions.json", "rb") as src, open(target_file, "wb") as tgt:
+            tgt.write(src.read())
+        print(f"File cloned: {target_file}")
+    except IOError as e:
+        print(f"Error cloning file: {e}")
+
+
+def import_mapping():
+    source_file = filedialog.askopenfilename(filetypes=(("Json Files", "*.json"), ("All Files", "*.*")))
+
+    try:
+        with open(source_file, "rb") as src, open("positions.json", "wb") as tgt:
+            tgt.write(src.read())
+        print(f"File cloned: {source_file}")
+    except IOError as e:
+        print(f"Error cloning file: {e}")
 
 
 def countdown(root, keys=default_keys):
@@ -57,7 +80,7 @@ def countdown(root, keys=default_keys):
             pos_dict[keys[index]] = (point[0], point[1])
 
             # Next key to map
-            root.after(1000, lambda: next_key(index+1))
+            root.after(1000, lambda: next_key(index + 1))
 
     # Create a Toplevel window for displaying the countdown
     countdown_window = tk.Toplevel()
@@ -113,19 +136,19 @@ root.config(menu=menu_bar)
 file_menu = tk.Menu(menu_bar, tearoff=False)
 menu_bar.add_cascade(label="File", menu=file_menu)
 # Add "Save" option to the "File" menu
-file_menu.add_command(label="Save", command=save_text)
+file_menu.add_command(label="Save Code", command=save_code)
 # Add "Load" option to the "File" menu
-file_menu.add_command(label="Load", command=load_text)
+file_menu.add_command(label="Load Code", command=load_code)
 
 # Create the "Setup" menu
 setup_menu = tk.Menu(menu_bar, tearoff=False)
 menu_bar.add_cascade(label="Setup", menu=setup_menu)
 # Add "Map Keys"
-setup_menu.add_command(label="Map Keys", command=lambda: countdown(root=root, keys=("a","b","c","d")))
+setup_menu.add_command(label="Map Keys", command=lambda: countdown(root=root, keys=("a", "k", "c", "l")))
 # Add "Export Mapping"
-setup_menu.add_command(label="Export Mapping")
+setup_menu.add_command(label="Export Mapping", command=export_mapping)
 # Add "Import Mapping"
-setup_menu.add_command(label="Import Mapping")
+setup_menu.add_command(label="Import Mapping", command=import_mapping)
 
 # Run the main loop
 root.mainloop()
