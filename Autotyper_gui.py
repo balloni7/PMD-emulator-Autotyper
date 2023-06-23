@@ -4,7 +4,7 @@ from PIL import ImageTk, Image
 import pyautogui
 import time
 import json
-
+import re
 
 def save_code():
     filename = filedialog.asksaveasfilename(defaultextension=".txt",
@@ -53,6 +53,9 @@ def import_mapping():
 
 
 def countdown(root, keys=default_keys):
+    # initiate the dictionary with the positions
+    pos_dict = {}
+
     def next_key(index):
         if index < len(keys):
             timer = 3
@@ -82,6 +85,7 @@ def countdown(root, keys=default_keys):
             # Next key to map
             root.after(1000, lambda: next_key(index + 1))
 
+
     # Create a Toplevel window for displaying the countdown
     countdown_window = tk.Toplevel()
     countdown_window.title("Countdown")
@@ -93,11 +97,29 @@ def countdown(root, keys=default_keys):
     label = tk.Label(countdown_window, font=("Arial", 36))
     label.pack(pady=20)
 
-    # initiate the dictionary with the positions
-    pos_dict = {}
-
     # start the mapping loop
     update_countdown(index=0, timer=5)
+
+
+def type_code(code):
+    """
+        code: a string containing the code you want to paste
+
+        Pastes the wondermail code, you have 2 seconds to change to your emulator window
+        The optimal way is to put the emulator in fullscreen, then map, and afterwards always
+        paste the codes in fullscreen, that way u can make sure that the keys are in the
+        same place as last time.
+    """
+    with open("positions.json", "r") as file:
+        pos_dict = json.load(file)
+
+    code = re.sub(r"[\n\t\s]*", "", code)
+
+    time.sleep(2)
+    for word in code:
+        pyautogui.moveTo(pos_dict[word][0], pos_dict[word][1])
+        pyautogui.mouseDown()
+        pyautogui.mouseUp()
 
 
 # Create the main window
@@ -121,8 +143,8 @@ content_frame = ttk.Frame(root)
 content_frame.place(relx=0.2, rely=0.2, relwidth=0.6, relheight=0.6)
 
 # Create a button
-button = ttk.Button(content_frame, text="Click Me!")
-button.place(relx=0.4, rely=0.1)
+type_button = ttk.Button(content_frame, text="Auto Type", command=lambda: type_code(text_box.get("1.0", "end-1c")))
+type_button.place(relx=0.4, rely=0.1)
 
 # Create a text box
 text_box = tk.Text(content_frame)
@@ -144,7 +166,7 @@ file_menu.add_command(label="Load Code", command=load_code)
 setup_menu = tk.Menu(menu_bar, tearoff=False)
 menu_bar.add_cascade(label="Setup", menu=setup_menu)
 # Add "Map Keys"
-setup_menu.add_command(label="Map Keys", command=lambda: countdown(root=root, keys=("a", "k", "c", "l")))
+setup_menu.add_command(label="Map Keys", command=lambda: countdown(root=root, keys=(default_keys)))
 # Add "Export Mapping"
 setup_menu.add_command(label="Export Mapping", command=export_mapping)
 # Add "Import Mapping"
