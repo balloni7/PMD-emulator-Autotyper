@@ -110,6 +110,7 @@ def type_code(code):
         paste the codes in fullscreen, that way u can make sure that the keys are in the
         same place as last time.
     """
+
     with open("positions.json", "r") as file:
         pos_dict = json.load(file)
 
@@ -120,6 +121,9 @@ def type_code(code):
         pyautogui.moveTo(pos_dict[word][0], pos_dict[word][1])
         pyautogui.mouseDown()
         pyautogui.mouseUp()
+
+def clear_box():
+    text_box.delete(1.0, tk.END)
 
 
 # Create the main window
@@ -143,7 +147,7 @@ content_frame = ttk.Frame(root)
 content_frame.place(relx=0.2, rely=0.2, relwidth=0.6, relheight=0.6)
 
 # Create a button
-type_button = ttk.Button(content_frame, text="Auto Type", command=lambda: type_code(text_box.get("1.0", "end-1c")))
+type_button = ttk.Button(content_frame, text="Auto Type", command=lambda: (type_code(text_box.get("1.0", "end-1c")), clear_box() ))
 type_button.place(relx=0.4, rely=0.1)
 
 # Create a text box
